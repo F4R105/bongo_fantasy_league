@@ -1,1 +1,1 @@
-# bongo_fantasy_league
+# Fantasy league for Tanzanian football league
