@@ -3,6 +3,7 @@
 <?php 
     // VERIFY AUTH
     if(!isset($_SESSION['user_id'])) header('location: ../../pages/auth/login.php');
+    $team = $_SESSION['team'];
     $user = $_SESSION['user_id'];
 
     // FILTER LOGIC
@@ -14,6 +15,7 @@
     // QUERIES
     $sql = "SELECT *, players.id AS player_id FROM players JOIN teams ON players.team = teams.id $whereClause $orderByClause LIMIT $perPage OFFSET $offset";
     $players_query = mysqli_query($conn, $sql);
+
     $sql = "SELECT * FROM players JOIN teams ON players.team = teams.id $whereClause $orderByClause";
     $pagination_query = mysqli_query($conn, $sql);
     $noOfPlayers = mysqli_num_rows($pagination_query);
@@ -23,11 +25,17 @@
 
     $sql = "SELECT * FROM teams";
     $teams_query = mysqli_query($conn, $sql);
+
+    $sql = "SELECT bank FROM fantasy_teams WHERE user = '$user'";
+    $banks_query = mysqli_query($conn, $sql);
+    $bank = mysqli_fetch_assoc($banks_query);
+    $budget = $bank['bank'];
 ?>
 
 <body>
     <?php require '../../components/navbar.php'; ?>
     <h1>Players</h1>
+    <h4>Bank: <?php echo $budget; ?></h4>
     <form action="" method="GET">
         <div>
             <label for="team">Filter by team</label>
@@ -89,7 +97,7 @@
                     </td>
                     <td><?php echo $player['name']; ?></td>
                     <td><?php echo $player['cost']; ?></td>
-                    <td><a href="../../process/fantasy/buyPlayer.php?id=<?php echo $player['player_id']; ?>">Buy <?php echo $player['player_id']; ?></a></td>
+                    <td><a href="../../process/fantasy/buyPlayer.php?id=<?php echo $player['player_id']; ?>">Buy</a></td>
                 </tr>
             <?php }; ?>
         </tbody>
